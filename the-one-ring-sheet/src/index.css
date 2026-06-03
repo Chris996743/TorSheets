@@ -1,0 +1,1007 @@
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --color-parchment: #fcf8ee;
+  --color-parchment-dark: #f5edd6;
+  --color-parchment-border: #e3d5b5;
+  --color-crimson: #8c2d19;
+  --color-crimson-hover: #b03a20;
+  --color-crimson-light: #f5e4e0;
+  --color-charcoal: #2c1b18;
+  --color-charcoal-light: #5c4b48;
+  --color-gold: #c59b27;
+  
+  --font-title: 'IM Fell English SC', serif;
+  --font-serif: 'IM Fell English', serif;
+  --font-sans: 'Inter', sans-serif;
+  
+  font-family: var(--font-sans);
+  background-color: #121212;
+  color: var(--color-charcoal);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* App container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #2c1b18;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Parchment wrapper */
+.parchment-container {
+  flex: 1;
+  background-color: var(--color-parchment);
+  background-image: 
+    radial-gradient(circle at 50% 50%, transparent 60%, rgba(44, 27, 24, 0.05) 100%),
+    linear-gradient(rgba(44, 27, 24, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(44, 27, 24, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 20px 20px, 20px 20px;
+  border: 12px double var(--color-crimson);
+  margin: 8px;
+  border-radius: 4px;
+  overflow-y: auto;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.15), 0 10px 25px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom Scrollbar for parchment */
+.parchment-container::-webkit-scrollbar {
+  width: 10px;
+}
+.parchment-container::-webkit-scrollbar-track {
+  background: var(--color-parchment-dark);
+}
+.parchment-container::-webkit-scrollbar-thumb {
+  background: var(--color-crimson);
+  border: 2px solid var(--color-parchment);
+  border-radius: 5px;
+}
+
+/* Welcome Page (No Selection) */
+.welcome-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  height: 80%;
+  color: var(--color-charcoal);
+}
+
+.welcome-logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 24px;
+  animation: pulse-ring 3s infinite ease-in-out;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(140, 45, 25, 0.3)); }
+  50% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(140, 45, 25, 0.6)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(140, 45, 25, 0.3)); }
+}
+
+.welcome-title {
+  font-family: var(--font-title);
+  font-size: 2.2rem;
+  color: var(--color-crimson);
+  margin-bottom: 12px;
+}
+
+.welcome-desc {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  max-width: 420px;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+
+.welcome-instruction {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--color-charcoal-light);
+  background-color: var(--color-parchment-dark);
+  padding: 12px 20px;
+  border-radius: 6px;
+  border: 1px dashed var(--color-parchment-border);
+}
+
+/* Init state */
+.init-button {
+  background-color: var(--color-crimson);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+}
+.init-button:hover {
+  background-color: var(--color-crimson-hover);
+  transform: translateY(-2px);
+}
+
+/* Character Sheet Headers */
+.sheet-header {
+  border-bottom: 2px solid var(--color-crimson);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.header-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.header-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 110px;
+}
+
+.header-ring {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-ring svg {
+  width: 100%;
+  height: 100%;
+}
+
+.sheet-title-text {
+  font-family: var(--font-title);
+  color: var(--color-crimson);
+  font-size: 1.8rem;
+  text-align: center;
+  margin: 4px 0 0 0;
+}
+
+/* Input Fields (Parchment Style) */
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group label {
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  color: var(--color-charcoal-light);
+  min-width: 90px;
+}
+
+.form-group input[type="text"] {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-parchment-border);
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--color-charcoal);
+  padding: 2px 4px;
+  transition: border-bottom 0.2s;
+}
+
+.form-group input[type="text"]:focus {
+  outline: none;
+  border-bottom: 1.5px solid var(--color-crimson);
+}
+
+/* Diamond Tracker Layout */
+.trackers-row {
+  display: flex;
+  justify-content: space-around;
+  margin: 10px 0;
+}
+
+.diamond-tracker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.diamond-tracker-label {
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  color: var(--color-charcoal-light);
+}
+
+/* Diamond Shapes */
+.diamond-box {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--color-crimson);
+  transform: rotate(45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-parchment-dark);
+  transition: all 0.2s;
+  position: relative;
+  cursor: pointer;
+  margin: 6px;
+}
+
+.diamond-box.active {
+  background-color: var(--color-crimson);
+}
+
+.diamond-box input {
+  transform: rotate(-45deg);
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--color-charcoal);
+  outline: none;
+}
+
+.diamond-box.active input {
+  color: white;
+}
+
+/* Attribute Section */
+.attributes-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.attribute-block {
+  flex: 1;
+  background-color: rgba(140, 45, 25, 0.03);
+  border: 1px solid var(--color-parchment-border);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.attribute-name {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  color: var(--color-crimson);
+  margin-bottom: 12px;
+}
+
+.attribute-diamonds {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.attribute-diamond-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.attribute-diamond-wrapper span {
+  font-family: var(--font-title);
+  font-size: 0.65rem;
+  color: var(--color-charcoal-light);
+  margin-top: 4px;
+}
+
+.diamond-large {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--color-crimson);
+  transform: rotate(45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-parchment);
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+}
+
+.diamond-large input {
+  transform: rotate(-45deg);
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--color-crimson);
+  outline: none;
+}
+
+/* Skills Section */
+.skills-section {
+  border-top: 2px solid var(--color-crimson);
+  padding: 16px;
+}
+
+.section-title {
+  font-family: var(--font-title);
+  font-size: 1.4rem;
+  color: var(--color-crimson);
+  text-align: center;
+  margin: 0 0 16px 0;
+  letter-spacing: 2px;
+}
+
+.skills-grid {
+  display: flex;
+  gap: 16px;
+}
+
+.skills-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background-color 0.15s;
+}
+
+.skill-row:hover {
+  background-color: rgba(140, 45, 25, 0.05);
+}
+
+.skill-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+/* Pentagon Favoured Toggle */
+.pentagon-fav {
+  width: 18px;
+  height: 18px;
+  background-color: transparent;
+  border: 1px solid var(--color-crimson);
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.pentagon-fav.active {
+  background-color: var(--color-crimson);
+  border-color: var(--color-crimson);
+}
+
+.skill-name-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--color-charcoal);
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.skill-name-btn:hover {
+  color: var(--color-crimson);
+  text-decoration: underline;
+}
+
+.skill-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Success Dice Ranks Track */
+.dice-rank-track {
+  display: flex;
+  gap: 3px;
+}
+
+.rank-box {
+  width: 11px;
+  height: 11px;
+  border: 1px solid var(--color-crimson);
+  cursor: pointer;
+  transition: background-color 0.1s;
+  background-color: transparent;
+}
+
+.rank-box.filled {
+  background-color: var(--color-crimson);
+}
+
+/* Item checkbox */
+.item-check {
+  width: 11px;
+  height: 11px;
+  border: 1px solid var(--color-charcoal-light);
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.item-check.filled {
+  background-color: var(--color-charcoal);
+}
+
+/* Combat & Advancement Area */
+.combat-adv-section {
+  border-top: 2px solid var(--color-crimson);
+  display: flex;
+  padding: 16px;
+  gap: 20px;
+}
+
+.combat-block, .rewards-block, .virtues-block {
+  flex: 1;
+  background-color: rgba(140, 45, 25, 0.02);
+  border: 1px solid var(--color-parchment-border);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.combat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.combat-name-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  color: var(--color-charcoal);
+  cursor: pointer;
+  padding: 0;
+}
+
+.combat-name-btn:hover {
+  color: var(--color-crimson);
+  text-decoration: underline;
+}
+
+/* Rewards/Virtues lists */
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.list-item-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.list-item-row input[type="text"] {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed var(--color-parchment-border);
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--color-charcoal);
+  padding: 1px;
+}
+
+.list-item-row input[type="text"]:focus {
+  outline: none;
+  border-bottom-style: solid;
+  border-bottom-color: var(--color-crimson);
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: var(--color-charcoal-light);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0 4px;
+}
+.delete-btn:hover {
+  color: var(--color-crimson);
+}
+
+.add-btn {
+  background: none;
+  border: 1px dashed var(--color-crimson);
+  color: var(--color-crimson);
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  padding: 4px;
+  cursor: pointer;
+  margin-top: 6px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.add-btn:hover {
+  background-color: var(--color-crimson-light);
+}
+
+/* Gear & Status Area */
+.gear-status-section {
+  border-top: 2px solid var(--color-crimson);
+  display: flex;
+  padding: 16px;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.gear-block {
+  flex: 2;
+}
+
+.gear-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.gear-table th {
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  color: var(--color-charcoal-light);
+  text-align: left;
+  border-bottom: 1px solid var(--color-crimson);
+  padding-bottom: 4px;
+}
+
+.gear-table td {
+  padding: 4px 0;
+}
+
+.gear-table input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--color-charcoal);
+  width: 90%;
+  outline: none;
+}
+
+.gear-table input:focus {
+  border-bottom-color: var(--color-crimson);
+}
+
+/* Health status panel */
+.status-block {
+  flex: 1.5;
+  background-color: rgba(140, 45, 25, 0.02);
+  border: 1px solid var(--color-parchment-border);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.condition-checkboxes {
+  display: flex;
+  justify-content: space-between;
+}
+
+.condition-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  user-select: none;
+}
+
+.checkbox-square {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--color-crimson);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.checkbox-square.checked {
+  background-color: var(--color-crimson);
+}
+
+.checkbox-square.checked::after {
+  content: '✓';
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Secondary status diamonds (Fatigue, Load, Hope, Endurance, Shadow, Scars) */
+.status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.status-diamond-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.status-diamond-item label {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  color: var(--color-charcoal-light);
+  text-align: center;
+}
+
+/* Floating Dice Roller Panel */
+.dice-roller-drawer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--color-parchment-dark);
+  border-top: 3px double var(--color-crimson);
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.3);
+  padding: 16px;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dice-roller-drawer.open {
+  transform: translateY(0);
+}
+
+.roller-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-crimson);
+  padding-bottom: 6px;
+}
+
+.roller-title {
+  font-family: var(--font-title);
+  font-size: 1.2rem;
+  color: var(--color-crimson);
+}
+
+.close-drawer-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--color-crimson);
+  cursor: pointer;
+}
+
+.roller-controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.dice-modifier {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dice-modifier button {
+  background-color: var(--color-crimson);
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.roll-btn {
+  background-color: var(--color-crimson);
+  color: white;
+  border: none;
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  padding: 8px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  flex: 1;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+.roll-btn:hover {
+  background-color: var(--color-crimson-hover);
+}
+
+/* Animations for rolling */
+.dice-animation-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  min-height: 80px;
+}
+
+.rolling-die {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.3rem;
+  background-color: white;
+  border: 2px solid var(--color-charcoal);
+  border-radius: 6px;
+  animation: shake-die 0.6s infinite;
+}
+
+.rolling-die.feat {
+  background-color: var(--color-crimson);
+  color: white;
+  border-color: var(--color-gold);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  width: 45px;
+  height: 45px;
+}
+
+@keyframes shake-die {
+  0% { transform: translate(2px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-2deg); }
+  20% { transform: translate(-3px, 0px) rotate(3deg); }
+  30% { transform: translate(0px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(2px, 1px) rotate(-2deg); }
+  80% { transform: translate(-1px, -1px) rotate(4deg); }
+  90% { transform: translate(2px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+/* Static Dice Results */
+.die-result {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.3rem;
+  border-radius: 6px;
+  box-shadow: 2px 3px 6px rgba(0,0,0,0.15);
+  background-color: white;
+  border: 2px solid var(--color-charcoal);
+}
+
+.die-result.feat {
+  background-color: var(--color-crimson);
+  color: white;
+  border-color: var(--color-gold);
+  width: 45px;
+  height: 45px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  font-family: var(--font-serif);
+}
+
+.die-result.feat.gandalf {
+  background-color: var(--color-gold);
+  color: var(--color-charcoal);
+  font-size: 1rem;
+}
+
+.die-result.feat.sauron {
+  background-color: var(--color-charcoal);
+  color: var(--color-crimson);
+  font-size: 1rem;
+}
+
+.die-result.success-six {
+  border-color: var(--color-gold);
+  background-color: var(--color-crimson-light);
+  color: var(--color-crimson);
+}
+
+.die-result.weary-zero {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+/* Roll Outcome Text */
+.roll-outcome {
+  text-align: center;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.roll-outcome.success {
+  background-color: rgba(197, 155, 39, 0.15);
+  border: 1px solid var(--color-gold);
+}
+
+.roll-outcome.failure {
+  background-color: rgba(140, 45, 25, 0.1);
+  border: 1px dashed var(--color-crimson);
+}
+
+.outcome-title {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.outcome-title.success {
+  color: var(--color-gold);
+}
+
+.outcome-title.failure {
+  color: var(--color-crimson);
+}
+
+.outcome-detail {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  margin: 4px 0 0 0;
+}
+
+/* Sidebar for Roll Log */
+.roll-log-trigger {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background-color: var(--color-crimson);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  z-index: 90;
+}
+
+.roll-log-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 260px;
+  background-color: var(--color-parchment-dark);
+  border-left: 2px solid var(--color-crimson);
+  box-shadow: -8px 0 24px rgba(0,0,0,0.15);
+  z-index: 95;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.roll-log-overlay.open {
+  transform: translateX(0);
+}
+
+.log-header {
+  padding: 12px;
+  border-bottom: 1px solid var(--color-crimson);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.log-title {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  margin: 0;
+  color: var(--color-crimson);
+}
+
+.log-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.log-item {
+  font-size: 0.85rem;
+  padding: 6px;
+  border-radius: 4px;
+  background-color: var(--color-parchment);
+  border: 1px solid var(--color-parchment-border);
+}
+
+.log-item-meta {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  color: var(--color-charcoal-light);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.log-item-roll {
+  font-family: var(--font-serif);
+  font-weight: bold;
+}
+
+.log-item-details {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  color: var(--color-charcoal-light);
+  margin-top: 2px;
+}
+
+.roll-icon {
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.2s;
+  user-select: none;
+  margin-left: 6px;
+}
+
+.roll-icon:hover {
+  opacity: 1;
+  transform: scale(1.2);
+  color: var(--color-crimson);
+}
+

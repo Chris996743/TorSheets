@@ -1,0 +1,13 @@
+{
+  "name": "The One Ring 2e Character Sheet",
+  "version": "1.0.0",
+  "manifest_version": 1,
+  "description": "Interactive character sheet for The One Ring 2nd Edition TTRPG with real-time sync and dice rolling.",
+  "action": {
+    "title": "The One Ring 2e Sheet",
+    "icon": "/icon.svg",
+    "popover": "/",
+    "height": 780,
+    "width": 580
+  }
+}
