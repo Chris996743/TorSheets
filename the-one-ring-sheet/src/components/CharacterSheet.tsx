@@ -24,12 +24,14 @@ const CULTURE_BASES = {
   'Rangers of the North': { strength: 3, heart: 2, wits: 3 },
 };
 
-// Blessing effects – adjust attribute and status calculations per rule book
-const BLESSING_EFFECTS = {
-  "Blessing of the Sea": { strengthBonus: 1 },
-  "Blessing of the Forest": { heartBonus: 1 },
-  "Blessing of the Sword": { witsBonus: 1 },
-  // Add more blessings as needed
+// Cultural Blessings – each culture has a unique blessing per the rulebook
+const CULTURAL_BLESSINGS: Record<string, { name: string; effect: string; attr: string }> = {
+  'Bardings': { name: 'Bardings Redoubtable', effect: 'Spend 1 Hope to add Valour to Strength rolls', attr: 'strength' },
+  'Men of Bree': { name: 'Bree-blood', effect: 'Spend 1 Hope to add Wisdom to a Persuade, Riddle, or Courtesy roll', attr: 'heart' },
+  "Dwarves of Durin's Folk": { name: 'A Stiff-necked People', effect: 'Cannot be magically forced to act', attr: 'strength' },
+  'Elves of Lindon': { name: 'Elven-skill', effect: 'Gain +1d on any favoured skill roll', attr: 'wits' },
+  'Hobbits of the Shire': { name: 'Hobbit-sense', effect: 'Spend 1 Hope to ask the Loremaster one question per session', attr: 'heart' },
+  'Rangers of the North': { name: 'Royalty Revealed', effect: 'Spend 1 Hope to be recognised and command authority', attr: 'wits' },
 };
 
 // Callings data – favoured skill keys correspond to keys in CharacterData.skills
@@ -70,7 +72,7 @@ const PATRONS = ['Balin, son of Fundin', 'Bilbo Baggins', "Círdan the Shipwrigh
 // Helper to check if a skill is allowed as favoured for the current calling
 const isSkillAllowedForCalling = (calling: string, skillKey: string): boolean => {
   const entry = CALLINGS[calling as keyof typeof CALLINGS];
-  if (!entry) return true; // No calling selected – allow all (fallback)
+  if (!entry) return false; // No calling selected – don't allow any favoured toggling
   return entry.favouredSkills.includes(skillKey);
 };
 
@@ -116,41 +118,41 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
 
   const handleCultureChange = (newCulture: string) => {
     const bases = CULTURE_BASES[newCulture as keyof typeof CULTURE_BASES] || { strength: 0, heart: 0, wits: 0 };
+    const blessing = CULTURAL_BLESSINGS[newCulture];
     onChange({
       ...data,
       culture: newCulture,
-      strength: { ...data.strength, maxSecondary: data.strength.rating + bases.strength },
-      heart: { ...data.heart, maxSecondary: data.heart.rating + bases.heart },
-      wits: { ...data.wits, maxSecondary: data.wits.rating + bases.wits },
+      blessing: blessing?.name || '',
+      strength: { ...data.strength, rating: bases.strength, tn: 20 - bases.strength, maxSecondary: bases.strength * 2 },
+      heart: { ...data.heart, rating: bases.heart, tn: 20 - bases.heart, maxSecondary: bases.heart * 2 },
+      wits: { ...data.wits, rating: bases.wits, tn: 20 - bases.wits, maxSecondary: bases.wits * 2 },
     });
   };
 
   // Recalculate derived status values when relevant fields change
-useEffect(() => {
-  const blessing = BLESSING_EFFECTS[data.blessing] || {};
-    const enduranceBase = data.strength.maxSecondary + (blessing.enduranceBonus || 0);
-    const hopeBase = data.heart.maxSecondary + (blessing.hopeBonus || 0);
-  // Gear load contributes to Endurance penalty but not Hope
-  const gearLoad = data.warGear.reduce((sum, item) => sum + (parseInt(item.load) || 0), 0);
+  useEffect(() => {
+    const enduranceBase = data.strength.maxSecondary;
+    const hopeBase = data.heart.maxSecondary;
+    // Gear load contributes to Endurance penalty but not Hope
+    const gearLoad = data.warGear.reduce((sum, item) => sum + (parseInt(String(item.load)) || 0), 0);
     const endurancePenalty = (data.fatigue || 0) + (data.scars || 0) + gearLoad;
     const hopePenalty = (data.fatigue || 0) + (data.shadow || 0) + (data.scars || 0);
-  const newCurrentEndurance = Math.max(0, enduranceBase - endurancePenalty);
-  const newCurrentHope = Math.max(0, hopeBase - hopePenalty);
-  if (newCurrentEndurance !== data.currentEndurance) {
-    updateField('currentEndurance', newCurrentEndurance);
-  }
-  if (newCurrentHope !== data.currentHope) {
-    updateField('currentHope', newCurrentHope);
-  }
-}, [
-  data.strength.maxSecondary,
-  data.heart.maxSecondary,
-  data.fatigue,
-  data.shadow,
-  data.scars,
-  data.warGear,
-  data.blessing,
-]);
+    const newCurrentEndurance = Math.max(0, enduranceBase - endurancePenalty);
+    const newCurrentHope = Math.max(0, hopeBase - hopePenalty);
+    if (newCurrentEndurance !== data.currentEndurance) {
+      updateField('currentEndurance', newCurrentEndurance);
+    }
+    if (newCurrentHope !== data.currentHope) {
+      updateField('currentHope', newCurrentHope);
+    }
+  }, [
+    data.strength.maxSecondary,
+    data.heart.maxSecondary,
+    data.fatigue,
+    data.shadow,
+    data.scars,
+    data.warGear,
+  ]);
 
 
   // Helper to update a skill's state
@@ -251,11 +253,13 @@ useEffect(() => {
             </div>
             <div className="form-group">
               <label>Blessing</label>
-<select value={data.blessing} onChange={(e) => updateField('blessing', e.target.value)}>
-  {Object.keys(BLESSING_EFFECTS).map((b) => (
-    <option key={b} value={b}>{b}</option>
-  ))}
-</select>
+              <input 
+                type="text" 
+                readOnly
+                value={data.blessing}
+                title={CULTURAL_BLESSINGS[data.culture]?.effect || ''}
+                style={{ cursor: 'default', backgroundColor: 'rgba(197,155,39,0.08)' }}
+              />
             </div>
 <div className="form-group">
   <label>Calling</label>
@@ -830,60 +834,101 @@ useEffect(() => {
           </table>
 
           {/* Defense Gear */}
-          <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label style={{ minWidth: 'auto' }}>Armour</label>
-              <input 
-                type="text" 
-                value={data.armour.protection} 
-                onChange={(e) => updateField('armour', { ...data.armour, protection: e.target.value })} 
-                placeholder="prot."
-                style={{ width: '40px' }}
-              />
-              <input 
-                type="text" 
-                value={data.armour.load} 
-                onChange={(e) => updateField('armour', { ...data.armour, load: parseInt(e.target.value) || 0 })} 
-                placeholder="load"
-                style={{ width: '40px' }}
-              />
-            </div>
-            
-            <div className="form-group" style={{ flex: 1 }}>
-              <label style={{ minWidth: 'auto' }}>Helm</label>
-              <input 
-                type="text" 
-                value={data.helm.protection} 
-                onChange={(e) => updateField('helm', { ...data.helm, protection: e.target.value })} 
-                placeholder="prot."
-                style={{ width: '40px' }}
-              />
-              <input 
-                type="text" 
-                value={data.helm.load} 
-                onChange={(e) => updateField('helm', { ...data.helm, load: parseInt(e.target.value) || 0 })} 
-                placeholder="load"
-                style={{ width: '40px' }}
-              />
-            </div>
-
-            <div className="form-group" style={{ flex: 1 }}>
-              <label style={{ minWidth: 'auto' }}>Shield</label>
-              <input 
-                type="text" 
-                value={data.shield.parry} 
-                onChange={(e) => updateField('shield', { ...data.shield, parry: parseInt(e.target.value) || 0 })} 
-                placeholder="parry"
-                style={{ width: '40px' }}
-              />
-              <input 
-                type="text" 
-                value={data.shield.load} 
-                onChange={(e) => updateField('shield', { ...data.shield, load: parseInt(e.target.value) || 0 })} 
-                placeholder="load"
-                style={{ width: '40px' }}
-              />
-            </div>
+          <div className="defense-gear-section">
+            <h4 className="section-title" style={{ fontSize: '0.95rem', marginBottom: '8px', textAlign: 'left' }}>DEFENCE</h4>
+            <table className="gear-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '15%' }}>Type</th>
+                  <th style={{ width: '35%' }}>Name</th>
+                  <th style={{ width: '25%' }}>Prot./Parry</th>
+                  <th style={{ width: '25%' }}>Load</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span style={{ fontFamily: 'var(--font-title)', fontSize: '0.8rem', color: 'var(--color-crimson)' }}>Armour</span></td>
+                  <td>
+                    <input 
+                      type="text" 
+                      value={data.armour.name} 
+                      onChange={(e) => updateField('armour', { ...data.armour, name: e.target.value })} 
+                      placeholder="e.g. Leather Corslet"
+                    />
+                  </td>
+                  <td>
+                    <input 
+                      type="text" 
+                      value={data.armour.protection} 
+                      onChange={(e) => updateField('armour', { ...data.armour, protection: e.target.value })} 
+                      placeholder="prot."
+                    />
+                  </td>
+                  <td>
+                    <input 
+                      type="text" 
+                      value={data.armour.load} 
+                      onChange={(e) => updateField('armour', { ...data.armour, load: parseInt(e.target.value) || 0 })} 
+                      placeholder="load"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td><span style={{ fontFamily: 'var(--font-title)', fontSize: '0.8rem', color: 'var(--color-crimson)' }}>Helm</span></td>
+                  <td>
+                    <input 
+                      type="text" 
+                      value={data.helm.name} 
+                      onChange={(e) => updateField('helm', { ...data.helm, name: e.target.value })} 
+                      placeholder="e.g. Iron Cap"
+                    />
+                  </td>
+                  <td>
+                    <input 
+                      type="text" 
+                      value={data.helm.protection} 
+                      onChange={(e) => updateField('helm', { ...data.helm, protection: e.target.value })} 
+                      placeholder="prot."
+                    />
+                  </td>
+                  <td>
+                    <input 
+                      type="text" 
+                      value={data.helm.load} 
+                      onChange={(e) => updateField('helm', { ...data.helm, load: parseInt(e.target.value) || 0 })} 
+                      placeholder="load"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td><span style={{ fontFamily: 'var(--font-title)', fontSize: '0.8rem', color: 'var(--color-crimson)' }}>Shield</span></td>
+                  <td>
+                    <input 
+                      type="text" 
+                      value={data.shield.name} 
+                      onChange={(e) => updateField('shield', { ...data.shield, name: e.target.value })} 
+                      placeholder="e.g. Round Shield"
+                    />
+                  </td>
+                  <td>
+                    <input 
+                      type="text" 
+                      value={data.shield.parry} 
+                      onChange={(e) => updateField('shield', { ...data.shield, parry: parseInt(e.target.value) || 0 })} 
+                      placeholder="parry"
+                    />
+                  </td>
+                  <td>
+                    <input 
+                      type="text" 
+                      value={data.shield.load} 
+                      onChange={(e) => updateField('shield', { ...data.shield, load: parseInt(e.target.value) || 0 })} 
+                      placeholder="load"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -984,6 +1029,130 @@ useEffect(() => {
                 />
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Useful Items & Marvelous Artifacts */}
+      <div className="gear-status-section">
+        {/* Useful Items */}
+        <div className="gear-block">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 className="section-title" style={{ fontSize: '1.1rem', marginBottom: '8px', textAlign: 'left' }}>USEFUL ITEMS</h3>
+          </div>
+          <div className="list-container">
+            {(data.usefulItems || []).map((item, idx) => (
+              <div key={idx} className="list-item-row">
+                <input 
+                  type="text" 
+                  value={item.name} 
+                  onChange={(e) => {
+                    const updated = [...(data.usefulItems || [])];
+                    updated[idx] = { ...updated[idx], name: e.target.value };
+                    updateField('usefulItems', updated);
+                  }} 
+                  placeholder="Item name…"
+                  style={{ flex: '0 0 40%' }}
+                />
+                <input 
+                  type="text" 
+                  value={item.description} 
+                  onChange={(e) => {
+                    const updated = [...(data.usefulItems || [])];
+                    updated[idx] = { ...updated[idx], description: e.target.value };
+                    updateField('usefulItems', updated);
+                  }} 
+                  placeholder="Description / effect…"
+                  style={{ flex: 1 }}
+                />
+                <button className="delete-btn" onClick={() => {
+                  const updated = (data.usefulItems || []).filter((_, i) => i !== idx);
+                  updateField('usefulItems', updated);
+                }}>×</button>
+              </div>
+            ))}
+            <button className="add-btn" onClick={() => {
+              const updated = [...(data.usefulItems || []), { name: '', description: '' }];
+              updateField('usefulItems', updated);
+            }}>+ Add Useful Item</button>
+          </div>
+        </div>
+
+        {/* Marvelous Artifacts */}
+        <div className="gear-block">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 className="section-title" style={{ fontSize: '1.1rem', marginBottom: '8px', textAlign: 'left' }}>MARVELOUS ARTIFACTS</h3>
+          </div>
+          <div className="list-container">
+            {(data.marvelousArtifacts || []).map((item, idx) => (
+              <div key={idx} className="list-item-row">
+                <input 
+                  type="text" 
+                  value={item.name} 
+                  onChange={(e) => {
+                    const updated = [...(data.marvelousArtifacts || [])];
+                    updated[idx] = { ...updated[idx], name: e.target.value };
+                    updateField('marvelousArtifacts', updated);
+                  }} 
+                  placeholder="Artifact name…"
+                  style={{ flex: '0 0 40%' }}
+                />
+                <input 
+                  type="text" 
+                  value={item.description} 
+                  onChange={(e) => {
+                    const updated = [...(data.marvelousArtifacts || [])];
+                    updated[idx] = { ...updated[idx], description: e.target.value };
+                    updateField('marvelousArtifacts', updated);
+                  }} 
+                  placeholder="Powers / description…"
+                  style={{ flex: 1 }}
+                />
+                <button className="delete-btn" onClick={() => {
+                  const updated = (data.marvelousArtifacts || []).filter((_, i) => i !== idx);
+                  updateField('marvelousArtifacts', updated);
+                }}>×</button>
+              </div>
+            ))}
+            <button className="add-btn" onClick={() => {
+              const updated = [...(data.marvelousArtifacts || []), { name: '', description: '' }];
+              updateField('marvelousArtifacts', updated);
+            }}>+ Add Artifact</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mount Section */}
+      <div className="skills-section" style={{ borderTop: '2px solid var(--color-crimson)', padding: '16px' }}>
+        <h3 className="section-title" style={{ fontSize: '1.1rem', marginBottom: '8px', textAlign: 'left' }}>MOUNT</h3>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <div className="form-group" style={{ flex: 2, minWidth: '120px' }}>
+            <label>Mount Name</label>
+            <input 
+              type="text" 
+              value={data.mount?.name || ''} 
+              onChange={(e) => updateField('mount', { ...(data.mount || { name: '', vigour: 0, description: '' }), name: e.target.value })} 
+              placeholder="e.g. Shadowfax"
+            />
+          </div>
+          <div className="form-group" style={{ flex: 0, minWidth: '80px' }}>
+            <label>Vigour</label>
+            <div className="diamond-box" style={{ width: '36px', height: '36px', margin: 0 }}>
+              <input 
+                type="text" 
+                value={data.mount?.vigour || 0} 
+                onChange={(e) => updateField('mount', { ...(data.mount || { name: '', vigour: 0, description: '' }), vigour: parseInt(e.target.value) || 0 })} 
+              />
+            </div>
+          </div>
+          <div className="form-group" style={{ flex: 3, minWidth: '180px' }}>
+            <label>Description / Notes</label>
+            <input 
+              type="text" 
+              value={data.mount?.description || ''} 
+              onChange={(e) => updateField('mount', { ...(data.mount || { name: '', vigour: 0, description: '' }), description: e.target.value })} 
+              placeholder="Breed, abilities, etc."
+            />
           </div>
         </div>
       </div>

@@ -22,13 +22,31 @@ export interface GearItem {
 }
 
 export interface ArmorItem {
+  name: string;
   protection: string;
   load: number;
 }
 
 export interface ShieldItem {
+  name: string;
   parry: number;
   load: number;
+}
+
+export interface UsefulItem {
+  name: string;
+  description: string;
+}
+
+export interface MarvelousArtifact {
+  name: string;
+  description: string;
+}
+
+export interface MountData {
+  name: string;
+  vigour: number;
+  description: string;
 }
 
 export interface CharacterData {
@@ -97,6 +115,9 @@ export interface CharacterData {
   armour: ArmorItem;
   helm: ArmorItem;
   shield: ShieldItem;
+  usefulItems: UsefulItem[];
+  marvelousArtifacts: MarvelousArtifact[];
+  mount: MountData;
   equipment: string;
 
   // Status & Health
