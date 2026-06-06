@@ -9,7 +9,10 @@ interface CharacterWizardProps {
   onClose: () => void;
   onComplete: (data: CharacterData) => void;
   existingData?: CharacterData | null;
+  ownerPlayerId?: string;
+  ownerPlayerName?: string;
 }
+
 
 // ─── Static Data ─────────────────────────────────────────────────────
 
@@ -190,6 +193,8 @@ const CharacterWizard: React.FC<CharacterWizardProps> = ({
   onClose,
   onComplete,
   existingData,
+  ownerPlayerId,
+  ownerPlayerName,
 }) => {
   // Wizard state
   const [step, setStep] = useState(0);
@@ -353,6 +358,12 @@ const CharacterWizard: React.FC<CharacterWizardProps> = ({
     const parry = witRating + culture.wit;
 
     return {
+      ownerPlayerId: ownerPlayerId || '',
+      ownerPlayerName: ownerPlayerName || '',
+      finalized: false,
+      gmUnlocked: false,
+
+      age: 33,
       name: charName.trim(),
       culture: culture.name,
       blessing: culture.blessing,
@@ -362,11 +373,14 @@ const CharacterWizard: React.FC<CharacterWizardProps> = ({
       features,
       flaws,
 
+
       treasure: 0,
       standardOfLiving: culture.standardOfLiving,
+      fellowshipFocus: '',
       adventurePoints: 0,
       skillPoints: 0,
       fellowshipPoints: 0,
+
 
       strength: { rating: strRating, tn: 20 - strRating, maxSecondary: endurance },
       heart: { rating: hrtRating, tn: 20 - hrtRating, maxSecondary: hope },
@@ -415,7 +429,13 @@ const CharacterWizard: React.FC<CharacterWizardProps> = ({
   };
 
   const handleComplete = () => {
-    onComplete(buildCharacterData());
+    const data = buildCharacterData();
+    // Finalize and assign ownership at creation time.
+    data.finalized = true;
+    data.ownerPlayerId = ownerPlayerId || '';
+    data.ownerPlayerName = ownerPlayerName || '';
+    data.gmUnlocked = false;
+    onComplete(data);
   };
 
   // ── Don't render if not open ──

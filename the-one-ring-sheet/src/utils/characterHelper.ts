@@ -15,9 +15,15 @@ const createDefaultCombat = (): CombatState => ({
 export function createDefaultCharacter(name: string): CharacterData {
   const defaultAge = 33;
   return {
+    ownerPlayerId: '',
+    ownerPlayerName: '',
+    finalized: false,
+    gmUnlocked: false,
+
     name: name || 'New Character',
     age: defaultAge,
     culture: '',
+
     blessing: '',
     calling: '',
     shadowPath: '',

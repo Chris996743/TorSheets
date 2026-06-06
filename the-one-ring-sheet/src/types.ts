@@ -51,9 +51,18 @@ export interface MountData {
 
 export interface CharacterData {
   age: number;
+
+  // Ownership / Locking
+  ownerPlayerId: string;
+  ownerPlayerName: string;
+  finalized: boolean;
+  gmUnlocked: boolean;
+
   // General Info
   name: string;
+
   culture: string;
+
   blessing: string;
   calling: string;
   shadowPath: string;
@@ -97,7 +106,7 @@ export interface CharacterData {
     riddle: SkillState;
     lore: SkillState;
   };
-  
+
   // Combat Skill Ranks
   combat: {
     axes: CombatState;

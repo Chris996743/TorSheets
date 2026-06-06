@@ -34,6 +34,21 @@ const CULTURAL_BLESSINGS: Record<string, { name: string; effect: string; attr: s
   'Rangers of the North': { name: 'Royalty Revealed', effect: 'Spend 1 Hope to be recognised and command authority', attr: 'wits' },
 };
 
+// Mechanical bonus mapping used when editing attribute ratings.
+// Your UI stores blessing as a string (data.blessing), so we key off that.
+const BLESSING_EFFECTS: Record<
+  string,
+  { strengthBonus: number; heartBonus: number; witsBonus: number }
+> = {
+  'Bardings Redoubtable': { strengthBonus: 1, heartBonus: 0, witsBonus: 0 },
+  'Bree-blood': { strengthBonus: 0, heartBonus: 1, witsBonus: 0 },
+  "A Stiff-necked People": { strengthBonus: 1, heartBonus: 0, witsBonus: 0 },
+  'Elven-skill': { strengthBonus: 0, heartBonus: 0, witsBonus: 1 },
+  'Hobbit-sense': { strengthBonus: 0, heartBonus: 1, witsBonus: 0 },
+  'Royalty Revealed': { strengthBonus: 0, heartBonus: 0, witsBonus: 1 },
+};
+
+
 // Callings data – favoured skill keys correspond to keys in CharacterData.skills
 const CALLINGS = {
   "Captain": {
