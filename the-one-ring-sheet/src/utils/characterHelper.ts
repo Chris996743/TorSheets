@@ -13,8 +13,10 @@ const createDefaultCombat = (): CombatState => ({
 });
 
 export function createDefaultCharacter(name: string): CharacterData {
+  const defaultAge = 33;
   return {
     name: name || 'New Character',
+    age: defaultAge,
     culture: '',
     blessing: '',
     calling: '',
@@ -22,17 +24,18 @@ export function createDefaultCharacter(name: string): CharacterData {
     patron: '',
     features: '',
     flaws: '',
-    
+
     treasure: 0,
     standardOfLiving: '',
+    fellowshipFocus: '',
     adventurePoints: 0,
     skillPoints: 0,
     fellowshipPoints: 0,
-    
+
     strength: { rating: 0, tn: 14, maxSecondary: 20 },
     heart: { rating: 0, tn: 14, maxSecondary: 15 },
     wits: { rating: 0, tn: 14, maxSecondary: 10 },
-    
+
     skills: {
       awe: createDefaultSkill(),
       athletics: createDefaultSkill(),
@@ -40,14 +43,14 @@ export function createDefaultCharacter(name: string): CharacterData {
       hunting: createDefaultSkill(),
       song: createDefaultSkill(),
       craft: createDefaultSkill(),
-      
+
       enhearten: createDefaultSkill(),
       travel: createDefaultSkill(),
       insight: createDefaultSkill(),
       healing: createDefaultSkill(),
       courtesy: createDefaultSkill(),
       battle: createDefaultSkill(),
-      
+
       persuade: createDefaultSkill(),
       stealth: createDefaultSkill(),
       scan: createDefaultSkill(),
@@ -55,19 +58,19 @@ export function createDefaultCharacter(name: string): CharacterData {
       riddle: createDefaultSkill(),
       lore: createDefaultSkill(),
     },
-    
+
     combat: {
       axes: createDefaultCombat(),
       bows: createDefaultCombat(),
       spears: createDefaultCombat(),
       swords: createDefaultCombat(),
     },
-    
+
     valour: 1,
     wisdom: 1,
     rewards: [],
     virtues: [],
-    
+
     warGear: [
       { name: '', dmg: '', inj: '', load: 0 },
       { name: '', dmg: '', inj: '', load: 0 },
@@ -81,14 +84,14 @@ export function createDefaultCharacter(name: string): CharacterData {
     marvelousArtifacts: [],
     mount: { name: '', vigour: 0, description: '' },
     equipment: '',
-    
+
     load: 0,
     fatigue: 0,
     currentHope: 15,
     currentEndurance: 20,
     shadow: 0,
     scars: 0,
-    
+
     weary: false,
     miserable: false,
     wounded: false,
@@ -100,7 +103,7 @@ export function loadCharacterData(metadata: any): CharacterData | null {
   if (!metadata || !metadata[METADATA_KEY]) {
     return null;
   }
-  
+
   try {
     const data = metadata[METADATA_KEY];
     // If it's a string, parse it. Owlbear Rodeo SDK usually handles JS objects natively.
@@ -113,3 +116,4 @@ export function loadCharacterData(metadata: any): CharacterData | null {
     return null;
   }
 }
+

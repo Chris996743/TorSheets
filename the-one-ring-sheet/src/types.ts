@@ -50,6 +50,7 @@ export interface MountData {
 }
 
 export interface CharacterData {
+  age: number;
   // General Info
   name: string;
   culture: string;
@@ -63,6 +64,7 @@ export interface CharacterData {
   // Resources
   treasure: number;
   standardOfLiving: string;
+  fellowshipFocus: string;
   adventurePoints: number;
   skillPoints: number;
   fellowshipPoints: number;
@@ -127,7 +129,8 @@ export interface CharacterData {
   currentEndurance: number;
   shadow: number;
   scars: number;
-  
+
+  // Derived condition boxes (still editable for now)
   weary: boolean;
   miserable: boolean;
   wounded: boolean;
@@ -135,6 +138,7 @@ export interface CharacterData {
 }
 
 export interface RollMessage {
+  specialSuccessEffects?: string[];
   id: string;
   playerName: string;
   characterName: string;
